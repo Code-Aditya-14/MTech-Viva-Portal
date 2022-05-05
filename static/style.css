@@ -1,0 +1,240 @@
+@import url(https://fonts.googleapis.com/css?family=Roboto:300);
+
+/* * {
+    margin: 0px;
+    padding: 0px;
+    
+}
+
+body {
+    background-color: rgba(36, 33, 33, 0.719);
+    font-family: "Roboto", sans-serif;
+}
+
+a {
+    text-decoration: none;
+    color: white;
+}
+
+.msg {
+    color: red;
+}
+
+.cont {
+    padding: 25px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 10px;
+    background-image: linear-gradient(to right, rgb(226, 115, 25) , rgb(217, 240, 116));
+    /* color: white; */
+/* }
+
+.cont1 {
+    top: 75% !important;
+}
+
+.cont2 {
+    top: 60% !important;
+}
+
+h1 {
+    margin: 5px;
+    font-size: 40px;
+    text-align: center;
+    color: white;
+}
+
+.cont div {
+    margin-top: 15px;
+    margin-bottom: 3px; 
+}
+
+input {
+    min-width: 20px;
+    margin: 10px;
+    height: 20px;
+}
+
+.cont .inp {
+    min-width: 250px;
+}
+
+/* .cont label {
+    padding: -10px !important;
+} */
+
+/* .cont .inp:active {
+    /* border-color: blue !important; */
+    /* outline-offset: 1px;
+}
+
+.cont select {
+    min-width: 250px;
+    margin: 10px;
+}
+
+.cont select:active {
+    border-color: blue;
+}
+
+button {
+    background: linear-gradient(to left, #003cff, #33ff00, #003cff);
+    color: white;
+    font-size: medium;
+    padding: 10px;
+    margin: 4px;
+    margin-top: 15px;
+    border-radius: 5px;
+    border: 0ch;
+    cursor: pointer;
+    color: #fff;
+    background-size: 200%;
+    transition: all 0.4s;
+}
+
+button:hover {
+    background-position: right;
+    /* color: black; */
+/* }
+
+button:disabled {
+    background-color: grey !important;
+}
+
+button:disabled:hover {
+    background-color: grey !important;
+}
+
+.container-contact100-form-btn {
+    width: 100%;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 5px;
+  }
+
+.cont .warning {
+    color: red;
+    text-align: center;
+}   */ 
+
+header .header{
+    background-color: #fff;
+    height: 45px;
+}
+
+header a img{
+    width: 134px;
+    margin-top: 4px;
+}
+
+.login-page {
+    width: 360px;
+    padding: 8% 0 0;
+    margin: auto;
+}
+
+.login-page .form .login{
+    margin-top: -31px;
+    margin-bottom: 26px;
+}
+
+.form {
+    position: relative;
+    z-index: 1;
+    background: #FFFFFF;
+    max-width: 360px;
+    margin: 0 auto 100px;
+    padding: 45px;
+    text-align: center;
+    box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2), 0 5px 5px 0 rgba(0, 0, 0, 0.24);
+}
+
+.form input {
+    font-family: "Roboto", sans-serif;
+    outline: 0;
+    background: #f2f2f2;
+    width: 100%;
+    border: 0;
+    margin: 0 0 15px;
+    padding: 15px;
+    box-sizing: border-box;
+    font-size: 14px;
+}
+
+.form button {
+    font-family: "Roboto", sans-serif;
+    text-transform: uppercase;
+    outline: 0;
+    background-color: #328f8a;
+    background-image: linear-gradient(45deg,#328f8a,#08ac4b);
+    width: 100%;
+    border: 0;
+    padding: 15px;
+    color: #FFFFFF;
+    font-size: 14px;
+    -webkit-transition: all 0.3 ease;
+    transition: all 0.3 ease;
+    cursor: pointer;
+}
+
+.form .message {
+    margin: 15px 0 0;
+    color: #b3b3b3;
+    font-size: 12px;
+}
+
+.form .message a {
+    color: #4CAF50;
+    text-decoration: none;
+}
+
+.container {
+    position: relative;
+    z-index: 1;
+    max-width: 300px;
+    margin: 0 auto;
+}
+
+body {
+    background-color: #328f8a;
+    background-image: linear-gradient(45deg,#328f8a,#08ac4b);
+    font-family: "Roboto", sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    background-attachment: fixed;
+}
+
+.radio {
+    max-width: 15px;
+    margin: 5px;
+}
+
+.msg {
+    color: red;
+}
+
+select {
+    width: 100%;
+}
+
+h1 {
+    text-align: center;
+}
+
+.warning {
+    text-align: center;
+    color: red;
+}
+
+.space {
+    width: 50%;
+    height: auto;
+    display: inline-block;
+}

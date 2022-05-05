@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" href="style.css">
+<title>M.Tech Viva Committee</title>
+</head>
+<body>
+  <body>
+    <div class="login-page">
+      <div class="form">
+        <div class="login">
+          <div class="login-header">
+            <h3>M.Tech Viva Committee</h3>
+          </div>
+        </div>
+        <form class="login-form" id="stud-sel">
+            <div>Student:</div>
+            <select id="nameSt">
+                <option value="">Select</option>
+            </select>
+            <p class="msg" id="7"></p>
+            <br>
+            <button type="submit" id="submit">Submit</button>
+        </form>
+        <br>
+        <br>
+        <form class="login-form" id="viva-det">
+            <div>Student Roll No:</div>
+            <input type="text" class="inp" id="rollno" value="" disabled>
+            <p class="msg" id="8"></p>
+            <div>Supervisor:</div>
+            <input type="text" class="inp" id="Supervisor" disabled>
+            <p class="msg" id="9"></p>
+            <div>Internal Examiner:</div>
+            <select id="inter" onclick="chInter()" onchange="chIn()">
+                <option value="">Select</option>
+            </select>
+            <p class="msg" id="10"></p>
+            <div>External Examiner:</div>
+            <select id="ext" onclick="chExt()" onchange="onCh()">
+                <option value="">Select</option>
+            </select>
+            <p class="msg" id="11"></p>
+            <div>Thesis Title:</div>
+            <input type="text" class="inp" id="vivaTitle" disabled>
+            <p class="msg" id="12"></p>
+            <div>Exam Date:</div>
+            <input type="datetime-local" id="exam">
+            <p class="msg" id="3"></p>
+            <div>Venue/Online Link</div>
+            <input type="text" class="inp" id="venue">
+            <p class="msg" id="4"></p>
+            <button type="submit" id="submit1">Submit</button>
+        </form>
+        <br>
+        <a href="/logout1.html"><button id="logout1">Logout</button></a>
+      </div>
+    </div>
+</body>
+</body>
+<script src="prof.js"></script>
+<script>
+    validate();
+    async function validate() {
+        const token=localStorage.getItem('token');
+        const result = await fetch('/api/reval1', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                token: token
+            })
+        }).then((res) => res.json())
+
+        if(result.status==='ok')
+        {
+            document.getElementById('Supervisor').value=`${result.name} - ${result.dep}`;
+            for(var i=0; i<result.studE.length; i++)
+            {
+                var opt = document.createElement('option');
+                opt.value=result.studE[i];
+                opt.innerHTML=`${result.studN[i]} - ${result.studR[i]}`;
+                document.getElementById('nameSt').appendChild(opt)
+            }
+            localStorage.setItem('email', result.email);
+        }
+        else
+        {
+            alert('Invalid attempt to access the page');
+            window.location='/';
+            localStorage.setItem('token', '');
+        }
+    }
+    
+    const form=document.getElementById('stud-sel');
+    form.addEventListener('submit', getStud);
+    async function getStud(event)
+    {
+        event.preventDefault();
+        const email=document.getElementById('nameSt').value;
+        const result=await fetch('/api/getStud', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify ({
+                email
+            })
+        }).then((res) => res.json());
+        document.getElementById('3').innerHTML = "";
+        document.getElementById('4').innerHTML = "";
+        document.getElementById('8').innerHTML = "";
+        document.getElementById('9').innerHTML = "";
+        document.getElementById('10').innerHTML = "";
+        document.getElementById('11').innerHTML = "";
+        document.getElementById('12').innerHTML = "";
+        if(result.status==='ok')
+        {
+            document.getElementById('rollno').value=result.rollNo;
+            document.getElementById('vivaTitle').value=result.title;
+        }
+        else if(result.idx)
+        {
+            document.getElementById(result.idx).innerHTML = result.error;
+        }
+        else {
+            alert(result.error);
+        }
+    }
+    
+    const email=localStorage.getItem('email');
+    const int=document.getElementById('inter');
+    const exte=document.getElementById('ext');
+    
+    function chInter() {
+        const filt=profDet.filter(prof => (prof.email!==email && prof.email!==exte.value));
+        console.log(filt)
+        for(var i=0; i<filt.length; i++)
+        {
+            var opt = document.createElement('option');
+            opt.value=filt[i].email;
+            opt.innerHTML=`${filt[i].Name} - ${filt[i].department}`;
+            int.appendChild(opt);
+        }
+    }
+    function chIn() {
+        int.setAttribute('disabled', '');
+    }
+    function chExt() {
+        const filt=profDet.filter(prof => (prof.email!==email && prof.email!==int.value));
+        console.log(filt)
+        for(var i=0; i<filt.length; i++)
+        {
+            var opt = document.createElement('option');
+            opt.value=filt[i].email;
+            opt.innerHTML=`${filt[i].Name} - ${filt[i].department}`;
+            exte.appendChild(opt);
+        }
+        exte.removeAttribute('onclick');
+    }
+
+    function onCh() {
+        exte.setAttribute('disabled', '');
+    }
+
+    const form1=document.getElementById('viva-det');
+    form1.addEventListener('submit', detSubmit);
+    async function detSubmit(event) {
+        event.preventDefault();
+        const roll=document.getElementById('rollno').value;
+        const sup=email;
+        const internal=document.getElementById('inter').value;
+        const exter=document.getElementById('ext').value;
+        const timing=document.getElementById('exam').value;
+        const link=document.getElementById('venue').value;
+        const result=await fetch('/api/viva', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify ({
+                roll,
+                sup,
+                internal,
+                exter,
+                timing,
+                link
+            })
+        }).then((res)=>res.json());
+        document.getElementById('3').innerHTML = "";
+        document.getElementById('4').innerHTML = "";
+        document.getElementById('8').innerHTML = "";
+        document.getElementById('9').innerHTML = "";
+        document.getElementById('10').innerHTML = "";
+        document.getElementById('11').innerHTML = "";
+        document.getElementById('12').innerHTML = "";
+        if(result.status==='ok')
+        {
+            alert('Successfully updated. Mail has been sent to student and examiners regarding this.');
+        }
+        else if(result.idx)
+        {
+            document.getElementById(result.idx).innerHTML = result.error;
+        }
+        else 
+        {
+            alert(result.error);
+        }
+    }
+</script>
+</html>

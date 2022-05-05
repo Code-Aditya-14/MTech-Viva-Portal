@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" href="style.css">
+<title>Viva Info</title>
+</head>
+<body>
+  <body>
+    <div class="login-page">
+      <div class="form">
+        <div class="login">
+          <div class="login-header">
+            <h2>M.Tech Viva</h2 >
+          </div>
+        </div>
+        <form class="login-form" id="stud-form">
+            <div>Name:</div>
+            <input type="text" class="inp" id="name" value="" disabled>
+            <div>Roll No:</div>
+            <input type="text" class="inp" id="roll" value="" disabled>
+            <div>Present Department:</div>
+            <input type="text" class="inp" id="dep" value="" disabled>
+            <div>Email:</div>
+            <input type="text" class="inp" id="email" value="" disabled>
+            <div>Supervisor:</div>
+            <select id="Sup">
+                <option value="">Select</option>
+            </select>
+            <div id="constSup"></div>
+            <p class="msg" id="6"></p>
+            <div>Thesis Title:</div>
+            <input type="text" class="inp" id="title">
+            <p class="msg" id="5"></p>
+            <button type="submit">Submit</button>
+        </form>
+        <br>
+        <a href="/logout.html"><button id="logout">Logout</button></a>
+        <br>
+        <br>
+        <div class="warning">You cannot edit the information after the creation of Viva Committe</div>
+      </div>
+    </div>
+</body>
+</body>
+<script>
+    
+    validate();
+    async function validate() {
+        const token=localStorage.getItem('token');
+        const result = await fetch('/api/reval', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                token: token
+            })
+        }).then((res) => res.json())
+
+        if(result.status==='ok')
+        {
+            document.getElementById('name').value=result.name;
+            document.getElementById('roll').value=result.rollNo;
+            document.getElementById('dep').value=result.dep;
+            document.getElementById('email').value=result.email;
+            if(result.title)
+            {
+                document.getElementById('title').value=result.title;
+            }
+            if(result.updated===true)
+            {
+                const sub = document.getElementById('submit');
+                sub.remove();
+                document.getElementById('title').setAttribute('disabled', '');
+            }
+        }
+        else
+        {
+            alert(result.error);
+            window.location='/';
+            localStorage.setItem('token', '');
+        }
+    }
+    
+    get_dets();
+    async function get_dets() {
+        const token=localStorage.getItem('token');
+        const result = await fetch('/api/ProfDetails', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                token: token
+            })
+        }).then((res) => res.json());
+        if(result.status === 'ok') {
+            const sel = document.getElementById('Sup');
+            for(var i=0; i<result.details.length; i++) {
+                var opt = document.createElement('option');
+                opt.value = result.details[i].email;
+                opt.innerHTML = `${result.details[i].Name} - ${result.details[i].department}`;
+                sel.appendChild(opt); 
+            }
+        }
+        else
+        {
+            alert(result.error);
+        }
+    }
+
+    // const name = "hdafhk";
+    // const rollNo= "whfh";
+    // const dep="hadfj";
+    // const email="ahfkj@ga"
+    // // name, rollNo, dep, email;
+    // document.getElementById('name').value=name;
+    // document.getElementById('roll').value=rollNo;
+    // document.getElementById('dep').value=dep;
+    // document.getElementById('email').value=email;
+
+    const form=document.getElementById('stud-form');
+    form.addEventListener('submit', studDetails);
+
+    async function studDetails(event)
+    {
+        event.preventDefault();
+        const email=document.getElementById('email').value;
+        const Supervisor=document.getElementById('Sup').value;
+        const title=document.getElementById('title').value;
+        const result=await fetch('/api/details', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify ({
+                email,
+                Supervisor,
+                title
+            })
+        }).then((res)=>res.json());
+        if(result.status==='ok')
+        {
+            alert('Successfully submitted. You will be informed timing and venue of the viva via mail.');
+            window.location = '/stud.html';
+        }
+        else if(result.idx)
+        {
+            document.getElementById(result.idx).innerHTML = result.error;
+        }
+        else
+        {
+            alert(result.error);
+        }
+    }
+</script>
+</html>
