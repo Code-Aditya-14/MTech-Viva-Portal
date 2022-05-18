@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="../style.css">
+    <title>Student Profile</title>
+</head>
+<body>
+    <ul>
+        <li><a href="/studProfile">Home</a></li>
+        <li style="float:right"><a href="/logout" id="Signup-nav">Logout</a></li>
+    </ul>
+    <div class="login-page login-page-new">
+        <div class="form">
+          <div class="login">
+            <div class="login-header">
+              <h3>M.Tech Viva</h3>
+            </div>
+          </div>
+          <br>
+          <br>
+            <table>
+                <tr><td>Name: </td><td id="name-1"></td></tr>
+                <tr></tr>
+                <tr><td>Roll No: </td><td id="roll-1"></td></tr>
+                <tr></tr>
+                <tr><td>Present Department: </td><td id="dep-1"></td></tr>
+                <tr></tr>
+                <tr><td>Email: </td><td id="email-1"></td></tr>
+                <tr></tr>
+                <tr><td>Supervisor: </td><td id="sup-1"></td></tr>
+                <tr></tr>
+                <tr><td>Thesis Title: </td><td id="tit-1"></td></tr>
+                <tr></tr>
+                <tr><td>Timing of Viva: </td><td id="time-1"></td></tr>
+                <tr></tr>
+                <tr><td>Venue: </td><td id="venue"></td></tr>
+            </table>
+        </div>
+      </div>
+</body>
+<script>
+    validate();
+    async function validate() {
+        const token=localStorage.getItem('token');
+        const result = await fetch('/api/reval', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                token: token,
+                type: '1'
+            })
+        }).then((res) => res.json())
+
+        if(result.status==='ok' && result.updated===true)
+        {
+            document.getElementById('name-1').innerHTML=result.name;
+            document.getElementById('roll-1').innerHTML=result.rollNo;
+            document.getElementById('dep-1').innerHTML=result.dep;
+            document.getElementById('email-1').innerHTML=result.email;
+            document.getElementById('sup-1').innerHTML = result.profName;
+            document.getElementById('tit-1').innerHTML=result.title;
+            document.getElementById('time-1').innerHTML=result.timing+" (In UTC)";
+            if(result.venue.indexOf('.com')===-1 && result.venue.indexOf('.in')===-1)
+                document.getElementById('venue').innerHTML=result.venue;
+            else
+            {
+                var a=document.createElement('a');
+                a.innerHTML = 'Meet Link';
+                a.href=result.venue;
+                a.target='_blank';
+                document.getElementById('venue').appendChild(a);
+            }
+        }
+        else
+        {
+            alert(result.error);
+            window.location='/';
+            localStorage.setItem('token', '');
+        }
+    }
+</script>
+</html>

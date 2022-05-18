@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Update Student</title>
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+  <body>
+    <ul>
+        <li><a href="/admin">Home</a></li>
+        <li><a href="/updateUsers">Go Back</a></li>
+        <li style="float:right"><a href="/logout" id="login-nav">Logout</a></li>
+    </ul>
+    <div class="login-page">
+      <div class="form">
+        <div class="login">
+          <div class="login-header">
+            <h2>Update Student</h2>
+          </div>
+        </div>
+        <form class="login-form" id="stud-form">
+            <div>Email: <span class="warning">*</span></div>
+            <input type="text" class="inp" id="email" value="">
+            <p class="msg" id="4"></p>
+            <div>Name:</div>
+            <input type="text" class="inp" id="name" value="">
+            <p class="msg" id="1"></p>
+            <div>Roll No.:</div>
+            <input type="text" class="inp" id="roll" value="">
+            <p class="msg" id="2"></p>
+            <div>Present Department:</div>
+            <input type="text" class="inp" id="dep" value="">
+            <p class="msg" id="3"></p>
+            <div>Supervisor:</div>
+            <select id="Sup" onchange="dis(1)">
+                <option value="">Select</option>
+            </select>
+            <p class="msg" id="6"></p>
+            <div>Title:</div>
+            <input type="text" class="inp" id="title">
+            <p class="msg" id="7"></p>
+            <div>Internal Examiner:</div>
+            <select id="inter" onclick="chInter()" onchange="dis(2)">
+                <option value="">Select</option>
+            </select>
+            <p class="msg" id="8"></p>
+            <div>External Examiner:</div>
+            <select id="ext" onclick="chExter()" onchange="dis(3)">
+                <option value="">Select</option>
+            </select>
+            <p class="msg" id="9"></p>
+            <div>Exam Date:</div>
+            <input type="datetime-local" id="date">
+            <p class="msg" id="10"></p>
+            <div>Venue:</div>
+            <input type="text" id="venue">
+            <p class="msg" id="11"></p>
+            <button type="submit">Submit</button>
+        </form>
+        <br>
+      </div>
+    </div>
+</body>
+</body>
+<script src="prof.js"></script>
+<script>
+    
+    validate();
+    async function validate() {
+        const token=localStorage.getItem('token');
+        const result = await fetch('/api/reval', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                token: token,
+                type: '3'
+            })
+        }).then((res) => res.json())
+
+        if(result.status==='ok');
+        else
+        {
+            alert(result.error);
+            window.location='/';
+            localStorage.setItem('token', '');
+        }
+    }
+
+    get_dets();
+    async function get_dets() {
+        const token=localStorage.getItem('token');
+        const result = await fetch('/api/ProfDetails', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                token: token
+            })
+        }).then((res) => res.json());
+        if(result.status === 'ok') {
+            const sel = document.getElementById('Sup');
+            for(var i=0; i<result.details.length; i++) {
+                var opt = document.createElement('option');
+                opt.value = result.details[i].email;
+                opt.innerHTML = `${result.details[i].Name} - ${result.details[i].department}`;
+                sel.appendChild(opt); 
+            }
+        }
+        else
+        {
+            alert(result.error);
+        }
+    }
+
+    function dis(ch)
+    {
+        if(ch===1)
+        {
+            document.getElementById('Sup').setAttribute('disabled', '');
+        }
+        else if(ch===2)
+        {
+            document.getElementById('inter').setAttribute('disabled', '')
+        }
+        else
+        {
+            document.getElementById('ext').setAttribute('disabled', '')
+        }
+    }
+
+    const email=document.getElementById('Sup');
+    const int=document.getElementById('inter');
+    const exte=document.getElementById('ext');
+    function chInter() {
+        const filt=profDet.filter(prof => (prof.email!==email.value && prof.email!==exte.value));
+        console.log(filt)
+        for(var i=0; i<filt.length; i++)
+        {
+            var opt = document.createElement('option');
+            opt.value=filt[i].email;
+            opt.innerHTML=`${filt[i].Name} - ${filt[i].department}`;
+            int.appendChild(opt);
+        }
+    }
+
+    function chExter() {
+        const filt=profDet.filter(prof => (prof.email!==email.value && prof.email!==int.value));
+        console.log(filt)
+        for(var i=0; i<filt.length; i++)
+        {
+            var opt = document.createElement('option');
+            opt.value=filt[i].email;
+            opt.innerHTML=`${filt[i].Name} - ${filt[i].department}`;
+            exte.appendChild(opt);
+        }
+    }
+
+    const form=document.getElementById('stud-form');
+    form.addEventListener('submit', UpdateUser);
+
+    async function UpdateUser(event) {
+        event.preventDefault()
+        const email = document.getElementById('email').value
+        const name =document.getElementById('name').value
+        const rollNo = document.getElementById('roll').value
+        const department = document.getElementById('dep').value
+        const Supervisor = document.getElementById('Sup').value
+        const title = document.getElementById('title').value
+        const internal = document.getElementById('inter').value
+        const external = document.getElementById('ext').value
+        const timing = document.getElementById('date').value
+        const venue = document.getElementById('venue').value
+        
+        const result = await fetch('/api/updateStud', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                email,
+                name,
+                rollNo,
+                department,
+                Supervisor,
+                title,
+                internal,
+                external,
+                timing,
+                venue
+            })
+        }).then((res) => res.json())
+        document.getElementById('1').innerHTML = ''
+        document.getElementById('2').innerHTML = ''
+        document.getElementById('3').innerHTML = ''
+        document.getElementById('4').innerHTML = ''
+        document.getElementById('6').innerHTML = ''
+        document.getElementById('7').innerHTML = ''
+        document.getElementById('8').innerHTML = ''
+        document.getElementById('9').innerHTML = ''
+        document.getElementById('10').innerHTML = ''
+        document.getElementById('11').innerHTML = ''
+        if (result.status === 'ok') {
+            alert(result.msg)
+            window.location='/admin'
+        }  else if(result.idx === '1') {
+            document.getElementById('name').value=''
+            document.getElementById('1').innerHTML=result.error
+        }  else if(result.idx === '2') {
+            document.getElementById('roll').value=''
+            document.getElementById('2').innerHTML=result.error
+        } else if(result.idx === '3') {
+            document.getElementById('dep').value=''
+            document.getElementById('3').innerHTML=result.error
+        } else if(result.idx === '4') {
+            document.getElementById('email').value=''
+            document.getElementById('4').innerHTML=result.error
+        } else if(result.idx === '6') {
+            document.getElementById('Sup').value=''
+            document.getElementById('6').innerHTML=result.error
+        } else if(result.idx === '7') {
+            document.getElementById('title').value=''
+            document.getElementById('7').innerHTML=result.error
+        } else if(result.idx === '8') {
+            document.getElementById('inter').value=''
+            document.getElementById('8').innerHTML=result.error
+        } else if(result.idx === '9') {
+            document.getElementById('ext').value=''
+            document.getElementById('9').innerHTML=result.error
+        } else if(result.idx === '10') {
+            document.getElementById('date').value=''
+            document.getElementById('10').innerHTML=result.error
+        } else if(result.idx === '11') {
+            document.getElementById('venue').value=''
+            document.getElementById('11').innerHTML=result.error
+        } else {
+            alert(result.error)
+            window.location='/updateStud'
+        }
+    }
+</script>
+</html>

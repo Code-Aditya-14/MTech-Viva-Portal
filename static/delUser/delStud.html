@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Delete Student</title>
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+  <body>
+    <ul>
+        <li><a href="/admin">Home</a></li>
+        <li><a href="/delUsers">Go Back</a></li>
+        <li style="float:right"><a href="/logout" id="login-nav">Logout</a></li>
+    </ul>
+    <div class="login-page">
+      <div class="form">
+        <div class="login">
+          <div class="login-header">
+            <h2>Delete Student</h2>
+          </div>
+        </div>
+        <form class="login-form" id="stud-form">
+            <div>Email:</div>
+            <input type="text" class="inp" id="email" value="">
+            <p class="msg" id="4"></p>
+            <button type="submit">Submit</button>
+        </form>
+        <br>
+      </div>
+    </div>
+</body>
+</body>
+<script>
+    
+    validate();
+    async function validate() {
+        const token=localStorage.getItem('token');
+        const result = await fetch('/api/reval', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                token: token,
+                type: '3'
+            })
+        }).then((res) => res.json())
+
+        if(result.status==='ok')
+        {
+            localStorage.setItem('emailAdmin', result.email)
+        }
+        else
+        {
+            alert(result.error);
+            window.location='/';
+            localStorage.setItem('token', '');
+        }
+    }
+
+    const form=document.getElementById('stud-form');
+    form.addEventListener('submit', deleteUser);
+
+    async function deleteUser(event) {
+        event.preventDefault()
+        const email = document.getElementById('email').value
+        if(confirm('This will delete the account of the user. He will no longer be able to login to this account.')) {
+            const result = await fetch('/api/delUser', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    email,
+                    type: '1'
+                })
+            }).then((res) => res.json())
+            document.getElementById('4').innerHTML = ''
+            if (result.status === 'ok') {
+                alert('Account deleted successfully')
+                window.location='/admin'
+            } else if(result.idx === '4') {
+                document.getElementById('email').value=''
+                document.getElementById('4').innerHTML=result.error
+            } else {
+                alert(result.error)
+                window.location='/delStud'
+            }
+        }
+    }
+</script>
+</html>

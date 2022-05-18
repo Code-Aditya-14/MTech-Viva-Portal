@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>M.Tech Viva</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <body>
+    <ul>
+        <li><a href="/">Home</a></li>
+    </ul>
+    <div class="login-page">
+      <div class="form">
+        <div class="login">
+          <div class="login-header">
+            <h3>ADMIN LOGIN</h3>
+          </div>
+        </div>
+        <form class="login-form" id="login">
+            <input type="email" id="email-login" placeholder="Email"/>
+            <p class="msg" id="1"></p>
+            <input type="password" id="password" placeholder="Password"/>
+            <p class="msg" id="2"></p>
+            <button type="submit" id="submit">login</button>
+        </form>
+        <br>
+      </div>
+    </div>
+</body>
+</body>
+<script>
+    const form=document.getElementById('login');
+    form.addEventListener('submit', login);
+    async function login(event)
+    {
+        event.preventDefault();
+        const email=document.getElementById('email-login').value;
+        const password=document.getElementById('password').value;
+        const result=await fetch('/api/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                email, 
+                password,
+                type: '3'
+            })
+        }).then((res)=>res.json());
+        if (result.status === 'ok') {                   
+            localStorage.setItem('token', result.data)
+            document.getElementById('1').innerHTML = "";
+            window.location='/admin'
+        } else {
+            document.getElementById('email-login').innerHTML = "";
+            document.getElementById('password').innerHTML = "";
+            document.getElementById(result.idx).innerHTML = result.error;
+        }
+    }
+</script>
+</html>

@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Update Faculty</title>
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+  <body>
+    <ul>
+        <li><a href="/admin">Home</a></li>
+        <li><a href="/updateUsers">Go Back</a></li>
+        <li style="float:right"><a href="/logout" id="login-nav">Logout</a></li>
+    </ul>
+    <div class="login-page">
+      <div class="form">
+        <div class="login">
+          <div class="login-header">
+            <h2>Update Faculty</h2>
+          </div>
+        </div>
+        <form class="login-form" id="stud-form">
+            <div>Name:</div>
+            <input type="text" class="inp" id="name" value="">
+            <p class="msg" id="1"></p>
+            <div>Password:</div>
+            <input type="password" class="inp" id="pass" value="">
+            <p class="msg" id="2"></p>
+            <button type="submit">Submit</button>
+        </form>
+        <br>
+      </div>
+    </div>
+</body>
+</body>
+<script>
+    
+    validate();
+    async function validate() {
+        const token=localStorage.getItem('token');
+        const result = await fetch('/api/reval', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                token: token,
+                type: '3'
+            })
+        }).then((res) => res.json())
+
+        if(result.status==='ok') {
+            localStorage.setItem('emailAdmin', result.email)
+        }
+        else
+        {
+            alert(result.error);
+            window.location='/';
+            localStorage.setItem('token', '');
+        }
+    }
+
+    const form=document.getElementById('stud-form');
+    form.addEventListener('submit', UpdateUser);
+
+    async function UpdateUser(event) {
+        event.preventDefault()
+        const email = localStorage.getItem('emailAdmin')
+        const Name =document.getElementById('name').value
+        const password = document.getElementById('pass').value
+        
+        const result = await fetch('/api/updateOther', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                email,
+                Name,
+                prog: '',
+                department: '',
+                password,
+                type : '2'
+            })
+        }).then((res) => res.json())
+        document.getElementById('1').innerHTML = ''
+        document.getElementById('2').innerHTML = ''
+        if (result.status === 'ok') {
+            alert('Details updated successfully')
+            window.location='/admin'
+        }  else if(result.idx === '1') {
+            document.getElementById('name').value=''
+            document.getElementById('1').innerHTML=result.error
+        }  else if(result.idx === '2') {
+            document.getElementById('pass').value=''
+            document.getElementById('2').innerHTML=result.error
+        }  else {
+            alert(result.error)
+            window.location='/updateMyInfo'
+        }
+    }
+</script>
+</html>

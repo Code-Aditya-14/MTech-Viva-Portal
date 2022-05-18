@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" href="style.css">
+<title>M.Tech Viva</title>
+</head>
+<body>
+  <body>
+    <ul>
+        <li><a href="/admin">Home</a></li>
+        <li style="float:right"><a href="/logout" id="login-nav">Logout</a></li>
+    </ul>
+    <div class="login-page">
+      <div class="form">
+        <div class="login">
+          <div class="login-header">
+            <h3>Admin</h3>
+          </div>
+        </div>
+        <br>
+        <br>
+        <div class="ind">
+            <a href="/addUsers"><button>Add A User</button></a>
+            <br>
+            <br>
+            <a href="/updateUsers"><button>Update User Info</button></a>
+            <br>
+            <br>
+            <a href="/expUserInfo"><button>Get Users Info</button></a>
+            <br>
+            <br>
+            <a href="/delUsers"><button>Delete A User</button></a>
+        </div>
+      </div>
+    </div>
+</body>
+</body>
+<script>
+    validate();
+    async function validate() {
+        const token=localStorage.getItem('token');
+        const result = await fetch('/api/reval', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                token: token,
+                type: '3'
+            })
+        }).then((res) => res.json())
+
+        if(result.status==='ok')
+        {
+            localStorage.setItem('emailAdmin', result.email);
+        }
+        else
+        {
+            alert('Invalid attempt to access the page');
+            window.location='/';
+            localStorage.setItem('token', '');
+        }
+    }
+</script>
+</html>

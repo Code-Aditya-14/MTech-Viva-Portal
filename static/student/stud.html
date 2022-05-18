@@ -1,11 +1,15 @@
 <!DOCTYPE html>
 <html>
 <head>
-<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="../style.css">
 <title>Viva Info</title>
 </head>
 <body>
   <body>
+    <ul>
+        <li><a href="/stud">Home</a></li>
+        <li style="float:right"><a href="/logout" id="Signup-nav">Logout</a></li>
+    </ul>
     <div class="login-page">
       <div class="form">
         <div class="login">
@@ -34,8 +38,6 @@
             <button type="submit">Submit</button>
         </form>
         <br>
-        <a href="/logout.html"><button id="logout">Logout</button></a>
-        <br>
         <br>
         <div class="warning">You cannot edit the information after the creation of Viva Committe</div>
       </div>
@@ -53,7 +55,8 @@
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                token: token
+                token: token,
+                type: '1'
             })
         }).then((res) => res.json())
 
@@ -69,9 +72,7 @@
             }
             if(result.updated===true)
             {
-                const sub = document.getElementById('submit');
-                sub.remove();
-                document.getElementById('title').setAttribute('disabled', '');
+                window.location="/studProfile";
             }
         }
         else
@@ -109,16 +110,6 @@
         }
     }
 
-    // const name = "hdafhk";
-    // const rollNo= "whfh";
-    // const dep="hadfj";
-    // const email="ahfkj@ga"
-    // // name, rollNo, dep, email;
-    // document.getElementById('name').value=name;
-    // document.getElementById('roll').value=rollNo;
-    // document.getElementById('dep').value=dep;
-    // document.getElementById('email').value=email;
-
     const form=document.getElementById('stud-form');
     form.addEventListener('submit', studDetails);
 
@@ -142,7 +133,7 @@
         if(result.status==='ok')
         {
             alert('Successfully submitted. You will be informed timing and venue of the viva via mail.');
-            window.location = '/stud.html';
+            window.location = '/stud';
         }
         else if(result.idx)
         {

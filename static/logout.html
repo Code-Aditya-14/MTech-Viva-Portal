@@ -8,30 +8,8 @@
 </head>
 <body>
     <script>
-        validate()
-        async function validate() {
-            const token = localStorage.getItem('token');
-            console.log(token);
-            const result = await fetch('/api/reval', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    token: token
-                })
-            }).then((res) => res.json())
-            
-            if (result.status === 'ok') {
-                // everythign went fine
-                localStorage.setItem('token', '')
-                window.location="/"
-            } else {
-                alert('Need to login to access this page')
-                localStorage.setItem('token', '')
-                window.location="/"
-            }
-        }
+        localStorage.setItem('token', '')
+        window.location="/"
     </script>
 </body>
 </html>

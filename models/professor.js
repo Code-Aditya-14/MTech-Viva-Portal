@@ -31,7 +31,13 @@ const ProfSchema = new mongoose.Schema(
         },
         studR : {
             type : [String]
-        }
+        },
+        Timing : {
+            type : [Date]
+        },
+        Venue : {
+            type: [String]
+        },
     }, 
     {
         collection: 'professors'

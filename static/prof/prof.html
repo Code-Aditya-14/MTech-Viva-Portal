@@ -1,11 +1,18 @@
 <!DOCTYPE html>
 <html>
 <head>
-<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="../style.css">
 <title>M.Tech Viva Committee</title>
 </head>
 <body>
   <body>
+    <ul>
+        <li><a href="/prof">Home</a></li>
+        <li><a href="/expProf">Professors Details</a></li>
+        <li><a href="#" onclick="myDet()">My Schedule</a></li>
+        <!-- <li><a href="#" onclick="myStud()">My Students</a></li> -->
+        <li style="float:right"><a href="/logout" id="login-nav">Logout</a></li>
+    </ul>
     <div class="login-page">
       <div class="form">
         <div class="login">
@@ -51,9 +58,8 @@
             <input type="text" class="inp" id="venue">
             <p class="msg" id="4"></p>
             <button type="submit" id="submit1">Submit</button>
+            <p class="note">To change the Viva details of the student contact admins. (to check anothor student <a href="/prof">click here</a>)</p>
         </form>
-        <br>
-        <a href="/logout1.html"><button id="logout1">Logout</button></a>
       </div>
     </div>
 </body>
@@ -63,13 +69,14 @@
     validate();
     async function validate() {
         const token=localStorage.getItem('token');
-        const result = await fetch('/api/reval1', {
+        const result = await fetch('/api/reval', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                token: token
+                token: token,
+                type: '2'
             })
         }).then((res) => res.json())
 
@@ -119,6 +126,11 @@
         {
             document.getElementById('rollno').value=result.rollNo;
             document.getElementById('vivaTitle').value=result.title;
+            if(result.isUpdated===true)
+            {
+                document.getElementById('submit1').remove();
+                document.getElementsByClassName('note')[0].setAttribute('style', 'display: block;')
+            }
         }
         else if(result.idx)
         {
@@ -129,6 +141,28 @@
         }
     }
     
+    async function myDet()
+    {
+        const email=localStorage.getItem('email');
+        const result = await fetch('/api/expSin', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify ({
+                email
+            })
+        }).then((res) => res.json());
+        if(result.status !== 'ok')
+        {
+            alert('An unknown error has occured');
+        }
+        else if(result.status === 'ok')
+        {
+            window.location = '/mySchedule';
+        }
+    }
+
     const email=localStorage.getItem('email');
     const int=document.getElementById('inter');
     const exte=document.getElementById('ext');

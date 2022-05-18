@@ -2,15 +2,18 @@
 <html>
 <head>
 <title>M.Tech Viva</title>
-<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="../style.css">
 </head>
 <body>
   <body>
+    <ul>
+			<li><a href="/">Home</a></li>
+		</ul>
     <div class="login-page">
       <div class="form">
         <div class="login">
           <div class="login-header">
-            <h3>FACULTY LOGIN</h3>
+            <h3>STUDENT LOGIN</h3>
           </div>
         </div>
         <form class="login-form" id="login">
@@ -20,8 +23,6 @@
             <p class="msg" id="2"></p>
             <button type="submit" id="submit">login</button>
         </form>
-        <br>
-        <a href="/"><button>Go Back</button></a>
       </div>
     </div>
 </body>
@@ -34,26 +35,30 @@
         event.preventDefault();
         const email=document.getElementById('email-login').value;
         const password=document.getElementById('password').value;
-        const result=await fetch('/api/login1', {
+        const result=await fetch('/api/login', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
                 email, 
-                password
+                password,
+                type: '1'
             })
         }).then((res)=>res.json());
         if (result.status === 'ok') {
             // everythign went fine
             console.log('Got the token: ', result.data)                    
             localStorage.setItem('token', result.data)
-            document.getElementById('1').innerHTML = "";
-            window.location='/prof'
-        } else {
-            document.getElementById('email-login').innerHTML = "";
-            document.getElementById('password').innerHTML = "";
+            window.location='/stud';
+        } else if(result.idx) {
+            document.getElementById('email-login').value = "";
+            document.getElementById('password').value = "";
             document.getElementById(result.idx).innerHTML = result.error;
+        } else {
+            document.getElementById('email-login').value = "";
+            document.getElementById('password').value = "";
+            alert(result.error);
         }
     }
 </script>

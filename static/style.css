@@ -1,129 +1,5 @@
 @import url(https://fonts.googleapis.com/css?family=Roboto:300);
 
-/* * {
-    margin: 0px;
-    padding: 0px;
-    
-}
-
-body {
-    background-color: rgba(36, 33, 33, 0.719);
-    font-family: "Roboto", sans-serif;
-}
-
-a {
-    text-decoration: none;
-    color: white;
-}
-
-.msg {
-    color: red;
-}
-
-.cont {
-    padding: 25px;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    border-radius: 10px;
-    background-image: linear-gradient(to right, rgb(226, 115, 25) , rgb(217, 240, 116));
-    /* color: white; */
-/* }
-
-.cont1 {
-    top: 75% !important;
-}
-
-.cont2 {
-    top: 60% !important;
-}
-
-h1 {
-    margin: 5px;
-    font-size: 40px;
-    text-align: center;
-    color: white;
-}
-
-.cont div {
-    margin-top: 15px;
-    margin-bottom: 3px; 
-}
-
-input {
-    min-width: 20px;
-    margin: 10px;
-    height: 20px;
-}
-
-.cont .inp {
-    min-width: 250px;
-}
-
-/* .cont label {
-    padding: -10px !important;
-} */
-
-/* .cont .inp:active {
-    /* border-color: blue !important; */
-    /* outline-offset: 1px;
-}
-
-.cont select {
-    min-width: 250px;
-    margin: 10px;
-}
-
-.cont select:active {
-    border-color: blue;
-}
-
-button {
-    background: linear-gradient(to left, #003cff, #33ff00, #003cff);
-    color: white;
-    font-size: medium;
-    padding: 10px;
-    margin: 4px;
-    margin-top: 15px;
-    border-radius: 5px;
-    border: 0ch;
-    cursor: pointer;
-    color: #fff;
-    background-size: 200%;
-    transition: all 0.4s;
-}
-
-button:hover {
-    background-position: right;
-    /* color: black; */
-/* }
-
-button:disabled {
-    background-color: grey !important;
-}
-
-button:disabled:hover {
-    background-color: grey !important;
-}
-
-.container-contact100-form-btn {
-    width: 100%;
-    display: -webkit-box;
-    display: -webkit-flex;
-    display: -moz-box;
-    display: -ms-flexbox;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    margin-top: 5px;
-  }
-
-.cont .warning {
-    color: red;
-    text-align: center;
-}   */ 
-
 header .header{
     background-color: #fff;
     height: 45px;
@@ -140,6 +16,10 @@ header a img{
     margin: auto;
 }
 
+.login-page-new {
+    width: 420px !important;
+}
+
 .login-page .form .login{
     margin-top: -31px;
     margin-bottom: 26px;
@@ -154,6 +34,11 @@ header a img{
     padding: 45px;
     text-align: center;
     box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2), 0 5px 5px 0 rgba(0, 0, 0, 0.24);
+    user-select: none;
+}
+
+tr {
+    height: 10px;
 }
 
 .form input {
@@ -237,4 +122,35 @@ h1 {
     width: 50%;
     height: auto;
     display: inline-block;
+}
+
+.note {
+    font-size: 12px;
+    display: none;
+}
+
+/* Navbar */
+
+ul {
+    list-style-type: none;
+    margin: 0px;
+    padding: 0px;
+    overflow: none;
+    background-color: #333;
+}
+
+li {
+    float: left;
+}
+
+li a {
+    display: block;
+    color: white;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+}
+
+li a:hover {
+    color: black;
 }
