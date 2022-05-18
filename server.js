@@ -8,7 +8,6 @@ const Student = require('./models/student')
 const Prof=require('./models/professor')
 const Admin=require('./models/admin')
 const csv = require('csvtojson')
-const config=require('./config')
 const nodemailer = require('./nodemailer.config')
 const fs=require('fs');
 const { parse } = require('json2csv')
