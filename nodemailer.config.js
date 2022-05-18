@@ -21,13 +21,17 @@ const transport = nodemailer.createTransport({
     }
 });
 
-module.exports.registered = (name, email, role) => {
+module.exports.registered = (name, email, role, password) => {
     transport.sendMail({
         from: user,
         to: email,
         subject: `Registered as ${role}`,
         html: `<h2>Hello ${name}</h2>
         <p>Your email has been registered as ${role} in M.Tech Viva Portal. You can now login to your account.</p>
+        <h3>Login Credentials</h3>
+        <h4>Username: ${email}</h4>
+        <h4>Password: ${password}</h4>
+        <p>We recommend you to change your password while logging in using forget password</p>
         <br>
         <h5>Regards</h5>`
         
@@ -122,7 +126,7 @@ module.exports.Examiner = (name, email, email1, prof, date, time, venue, interna
         transport.sendMail({
             from: user,
             to:`${email}, ${email1}`,
-            subject: 'Internal Examiner of M.Tech Viva',
+            subject: 'Examiner of M.Tech Viva',
             html: `<h2>Hello There</h2>
             <p>${prof} has chosen you in the viva committee for ${name}. The internal examiner ${internal} and external examiner is ${external} as external examiner. The viva is at ${date} on ${time} in ${venue}.</p>
             <br>
@@ -133,7 +137,7 @@ module.exports.Examiner = (name, email, email1, prof, date, time, venue, interna
         transport.sendMail({
             from: user,
             to:`${email}, ${email1}`,
-            subject: 'Internal Examiner of M.Tech Viva',
+            subject: 'Examiner of M.Tech Viva',
             html: `<h2>Hello There</h2>
             <p>${prof} has chosen you in the viva committee for ${name}. The internal examiner ${internal} and external examiner is ${external} as external examiner. The viva is at ${date} on ${time} online at <a href=${venue}>Exam Link</a>.</p>
             <br>
@@ -146,7 +150,7 @@ module.exports.ExaminerNew = (name, email, email1, prof, internal, external) => 
     transport.sendMail({
         from: user,
         to:`${email}, ${email1}`,
-        subject: 'Internal Examiner of M.Tech Viva',
+        subject: 'Examiner of M.Tech Viva',
         html: `<h2>Hello There</h2>
         <p>${prof} has chosen you in the viva committee for ${name}. The internal examiner ${internal} and external examiner is ${external} as external examiner. Rest of the details remain same.</p>
         <br>
@@ -155,12 +159,37 @@ module.exports.ExaminerNew = (name, email, email1, prof, internal, external) => 
 }
 
 module.exports.newExamSchedule = (name, email, email1, email2, prof, internal, external, date, time , venue) => {
+    if(venue.indexOf('.com')===-1 && venue.indexOf('.in')===-1) {
+        transport.sendMail({
+            from: user,
+            to:`${email}, ${email1}, ${email2}`,
+            subject: 'Examiner of M.Tech Viva',
+            html: `<h2>Hello There</h2>
+            <p>The new schedule for the viva of ${name} is now scheduled on ${date} at ${time} in ${venue}. The supervisor of the student is ${prof}, internal examiner is ${internal} and external examiner is ${external}.</p>
+            <br>
+            <h5>Regards</h5>`
+        })
+    }
+    else {
+        transport.sendMail({
+            from: user,
+            to:`${email}, ${email1}, ${email2}`,
+            subject: 'Examiner of M.Tech Viva',
+            html: `<h2>Hello There</h2>
+            <p>The new schedule for the viva of ${name} is now scheduled on ${date} at ${time} online at <a href=${venue}>Exam Link</a>. The supervisor of the student is ${prof}, internal examiner is ${internal} and external examiner is ${external}.</p>
+            <br>
+            <h5>Regards</h5>`
+        })
+    }
+}
+
+module.exports.forgetPass = (email, user, code) => {
     transport.sendMail({
         from: user,
-        to:`${email}, ${email1}, ${email2}`,
-        subject: 'Internal Examiner of M.Tech Viva',
+        to:email,
+        subject: 'Password recovery email',
         html: `<h2>Hello There</h2>
-        <p>The new schedule for the viva of ${name} will be </p>
+        <p>Please click on the link and enter the new password. <a href="http://localhost:3000/verify/${user}/${code}">Click here</a>.</p>
         <br>
         <h5>Regards</h5>`
     })

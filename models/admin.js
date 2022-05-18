@@ -14,7 +14,10 @@ const AdminSchema = new mongoose.Schema(
         password: { 
 			type: String, 
 			required: true 
-		}
+		},
+        code: {
+            type: String
+        }
     }, 
     {
         collection: 'admin'

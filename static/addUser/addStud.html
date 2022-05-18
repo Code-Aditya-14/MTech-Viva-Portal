@@ -1,8 +1,11 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Add Student</title>
-<link rel="stylesheet" href="../style.css">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Student</title>
+    <link rel="stylesheet" href="../style.css">
 </head>
 <body>
   <body>
@@ -31,9 +34,6 @@
             <div>Email:</div>
             <input type="text" class="inp" id="email" value="">
             <p class="msg" id="4"></p>
-            <div>Password:</div>
-            <input type="password" class="inp" id="password" value="">
-            <p class="msg" id="5"></p>
             <button type="submit">Submit</button>
         </form>
         <br>
@@ -75,7 +75,6 @@
         const rollNo = document.getElementById('roll').value
         const department = document.getElementById('dep').value
         const email = document.getElementById('email').value
-        const password = document.getElementById('password').value
         
         const result = await fetch('/api/register', {
             method: 'POST',
@@ -86,7 +85,6 @@
                 name,
                 rollNo,
                 email,
-                password,
                 department,
                 Name: 'Aditya',
                 prog: 'Faculty',
@@ -97,7 +95,6 @@
         document.getElementById('2').innerHTML = ''
         document.getElementById('3').innerHTML = ''
         document.getElementById('4').innerHTML = ''
-        document.getElementById('5').innerHTML = ''
         if (result.status === 'ok') {
             alert('User Added successfully')
             window.location='/admin'
@@ -113,9 +110,6 @@
         } else if(result.idx === '4') {
             document.getElementById('email').value=''
             document.getElementById('4').innerHTML=result.error
-        } else if(result.idx === '5') {
-            document.getElementById('password').value = ''
-            document.getElementById('5').innerHTML = result.error
         } else {
             alert(result.error)
             window.location='/addstud'

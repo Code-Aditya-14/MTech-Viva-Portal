@@ -45,6 +45,9 @@ const StudentSchema = new mongoose.Schema(
         updated : {
             type : Boolean,
             default : false
+        },
+        code: {
+            type: String
         }
     },
     {

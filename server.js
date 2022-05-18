@@ -32,10 +32,14 @@ app.use('/', express.static(path.join(__dirname, 'static')))
 app.use('/studLogin', express.static(path.join(__dirname, 'static/student/studLogin.html')))
 app.use('/profLogin', express.static(path.join(__dirname, 'static/prof/profLogin.html')))
 app.use('/stud', express.static(path.join(__dirname, 'static/student/stud.html')))
+app.use('/forgetStud', express.static(path.join(__dirname, 'static/student/forget-stud.html')))
 app.use('/profs', express.static(path.join(__dirname, 'static/prof/prof.html')))
+app.use('/forgetFaculty', express.static(path.join(__dirname, 'static/prof/forget-prof.html')))
 app.use('/studProfile', express.static(path.join(__dirname, 'static/student/studProfile.html')))
 app.use('/adminLogin', express.static(path.join(__dirname, 'static/adminLogin.html')))
+app.use('/forgetAdmin', express.static(path.join(__dirname, 'static/forget-admin.html')))
 app.use('/admin', express.static(path.join(__dirname, 'static/admin.html')))
+app.use('/verify/:user/:code', express.static(path.join(__dirname, 'static/passwordchange.html')))
 app.use('/addUsers', express.static(path.join(__dirname, 'static/addUser/adduser.html')))
 app.use('/addstud', express.static(path.join(__dirname, 'static/addUser/addStud.html')))
 app.use('/addfaculty', express.static(path.join(__dirname, 'static/addUser/addProf.html')))
@@ -51,10 +55,21 @@ app.use('/delStud', express.static(path.join(__dirname, 'static/delUser/delStud.
 app.use('/delFaculty', express.static(path.join(__dirname, 'static/delUser/delFaculty.html')))
 app.use('/logout', express.static(path.join(__dirname, 'static/logout.html')))
 
+function generateCode(len) 
+{
+	const val= "1234567890qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM"
+	var code=""
+	for(var i=0; i<len; i++)
+	{
+		code+=val[Math.floor(Math.random() * val.length )];
+	}
+	return code;
+}
+
 //api
 //register
 app.post('/api/register', async (req, res) => {
-    const { name, email, password: plainTextPassword, rollNo, department, prog, Name, type } = req.body
+    const { name, email, rollNo, department, prog, Name, type } = req.body
 
 	if (!name || typeof name !== 'string') {
 		return res.json({ status: 'error', idx: '1', error: 'Invalid name' })
@@ -76,9 +91,7 @@ app.post('/api/register', async (req, res) => {
 		return res.json({ status: 'error', idx: '3', error: 'Invalid Department' })
 	}
 
-	if (!plainTextPassword || typeof plainTextPassword !== 'string') {
-		return res.json({ status: 'error', idx: '5', error: 'Invalid password' })
-	}
+	const plainTextPassword = generateCode(8);
 
 	if(!type || typeof type !== 'string') {
 		return res.json({ status: 'error', idx: '6', error: 'Invalid Request' })
@@ -128,7 +141,7 @@ app.post('/api/register', async (req, res) => {
 		else {
 			return res.json({ status: 'failed', idx: '6', error: 'Invalid request' })
 		}
-		nodemailer.registered(Name, email, role)
+		nodemailer.registered(Name, email, role, password)
 		return res.json({status: 'ok', message: 'Registered successfully'})
     } catch (error) {
         if (error.code === 11000) {
@@ -232,6 +245,197 @@ app.post('/api/login', async (req, res) => {
 		return res.json({ status: 'failed', error: 'Invalid Request'})
 	}
 	res.json({ status: 'error', idx: '1', error: 'Invalid email/password' });
+})
+
+//forget password
+//send email
+app.post('/api/forget', async (req, res) => {
+	const code = generateCode(20);
+	const { email, type } = req.body
+	try {
+		if(type === '1')
+		{
+			const result = await Student.updateOne(
+				{ email },
+				{
+					$set: {
+						code
+					}
+				}
+			)
+			if(result.acknowledged === true)
+			{
+				nodemailer.forgetPass(email, 'Stu', code)
+				return res.json({ status : 'ok', msg: 'Mail send to the user' })
+			}
+			else
+			{
+				res.json({ status: 'failed', idx: '4', error: 'Invalid User' })
+			}
+		}
+		else if(type === '2')
+		{
+			const result = await Prof.updateOne(
+				{ email },
+				{
+					$set: {
+						code
+					}
+				}
+			)
+			if(result.acknowledged === true)
+			{
+				nodemailer.forgetPass(email, 'Fac', code)
+				return res.json({ status : 'ok', msg: 'Mail send to the user' })
+			}
+			else
+			{
+				res.json({ status: 'failed', idx:'4', error: 'Invalid User' })
+			}
+		}
+		if(type === '3')
+		{
+			const result = await Admin.updateOne(
+				{ email },
+				{
+					$set: {
+						code
+					}
+				}
+			)
+			if(result.acknowledged === true)
+			{
+				nodemailer.forgetPass(email, 'Adm', code)
+				return res.json({ status : 'ok', msg: 'Mail send to the user' })
+			}
+			else
+			{
+				res.json({ status: 'failed', idx:'4', error: 'Invalid User' })
+			}
+		}	
+		else
+		{
+			res.json({ status: 'failed', error : 'Invalid Request' })
+		}
+	} catch (error) {
+		res.json({ status: 'failed', error : 'Invalid Request' })
+	}
+})
+
+app.post('/api/validate/:user/:code', async (req, res) => {
+	const code = req.params.code
+	const user = req.params.user
+	try {
+		if(user==='Stu')
+		{
+			const user1 = await Student.findOne({ code })
+			if(user1)
+			{
+				return res.json({ status: 'ok' })
+			}
+		} 
+		else if(user==='Fac')
+		{
+			const user1 = await Prof.findOne({ code })
+			if(user1)
+			{
+				return res.json({ status: 'ok' })
+			}
+		} 
+		else if(user==='Adm')
+		{
+			const user1 = await Admin.findOne({ code })
+			if(user1)
+			{
+				return res.json({ status: 'ok' })
+			}
+		} 
+		res.json({ status: 'failed', error: 'Invalid link for password change' })
+	} catch {
+		res.json({ status: 'failed', error: 'An unknown error occured' })
+	}
+})
+
+//change password
+app.post('/api/recoverpass/:user/:code', async (req, res) => {
+	const code = req.params.code
+	const user = req.params.user
+	console.log(req.body)
+	const { password: plainTextPassword, cpassword: cpassword } = req.body
+	if (!plainTextPassword || typeof plainTextPassword !== 'string') {
+		return res.json({ status: 'error', idx: '4', error: 'Invalid password format' })
+	}
+
+	if (plainTextPassword.length < 6) {
+		return res.json({
+			status: 'error',
+			idx: '4',
+			error: 'Password too small. Should be atleast 6 characters'
+		})
+	}
+
+	if(plainTextPassword!==cpassword)
+	{
+		return res.json({
+			status: 'failed', 
+			idx: '5',
+			error: 'password and confirm password did not match'
+		})
+	}
+	try {
+		const password = await bcrypt.hash(plainTextPassword, 10)
+		if(user==='Stu')
+		{
+			const result = await Student.updateOne(
+				{ code }, 
+				{
+					$set: {
+						code: '',
+						password: password
+					}
+				}
+			)
+			if(result.acknowledged === true)
+			{
+				return res.json({ status: 'ok' })
+			}
+		}
+		if(user==='Fac')
+		{
+			const result = await Prof.updateOne(
+				{ code }, 
+				{
+					$set: {
+						code: '',
+						password: password
+					}
+				}
+			)
+			if(result.acknowledged === true)
+			{
+				return res.json({ status: 'ok' })
+			}
+		}
+		if(user==='Adm')
+		{
+			const result = await Prof.updateOne(
+				{ code }, 
+				{
+					$set: {
+						code: '',
+						password: password
+					}
+				}
+			)
+			if(result.acknowledged === true)
+			{
+				return res.json({ status: 'ok' })
+			}
+		}
+		res.json({ status: 'failed', error: 'Invalid Link for password change' })
+	} catch (error) {
+		res.json({ status: 'failed', error: 'An unknown error occured' })
+	}
 })
 
 //validate

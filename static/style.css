@@ -11,8 +11,8 @@ header a img{
 }
 
 .login-page {
-    width: 360px;
-    padding: 8% 0 0;
+    width: 270px;
+    padding: 30% 0 0;
     margin: auto;
 }
 
@@ -153,4 +153,12 @@ li a {
 
 li a:hover {
     color: black;
+}
+
+@media only screen and (min-width: 762px) {
+    .login-page {
+        width: 360px;
+        padding: 8% 0 0;
+        margin: auto;
+    }
 }

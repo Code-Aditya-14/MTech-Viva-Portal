@@ -38,6 +38,9 @@ const ProfSchema = new mongoose.Schema(
         Venue : {
             type: [String]
         },
+        code: {
+            type: String
+        }
     }, 
     {
         collection: 'professors'
