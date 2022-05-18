@@ -13,7 +13,14 @@ const fs=require('fs');
 const { parse } = require('json2csv')
 const { type } = require('express/lib/response')
 require('dotenv').config()
-mongoose.connect(process.env.db)
+
+const DB = process.env.DB
+mongoose.connect(DB, {
+	useNewUrlParser: true, 
+	useUnifiedTopology: true
+}).then(() => {
+	console.log(`DB connection successful`);
+}).catch((err) => console.log(err));
 
 const JWT_SECRET=process.env.JWT_SECRET;
 
