@@ -803,9 +803,9 @@ app.post('/api/viva', async (req, res) => {
 			if(!studentUser || !profUser || !intprof || !extprof) {
 				return res.json({ status: 'failed', error: 'Something went wrong' });
 			}
-			// nodemailer.studEvalTiming(studentUser.name, sup, profUser.Name, exactDate, exactTime, link);
-			// nodemailer.internalExaminer(studentUser.name, internal, profUser.Name, exactDate, exactTime, link, intprof.Name, extprof.Name);
-			// nodemailer.externalExaminer(studentUser.name, exter, profUser.Name, exactDate, exactTime, link, intprof.Name, extprof.Name);
+			nodemailer.studEvalTiming(studentUser.name, sup, profUser.Name, exactDate, exactTime, link);
+			nodemailer.internalExaminer(studentUser.name, internal, profUser.Name, exactDate, exactTime, link, intprof.Name, extprof.Name);
+			nodemailer.externalExaminer(studentUser.name, exter, profUser.Name, exactDate, exactTime, link, intprof.Name, extprof.Name);
 			return res.json({ status : 'ok' })
 		} else {
 			res.json({ status: 'failed', error: 'An error occured' });
