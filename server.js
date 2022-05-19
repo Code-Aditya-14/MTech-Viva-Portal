@@ -670,7 +670,7 @@ app.post('/api/expSin', async (req, res) => {
 			data.push({
 				'Name': post.Name,
 				'Date': 'N/A',
-				'Time': 'N/A',
+				'Time(in GMT)': 'N/A',
 				'Venue': 'N/A'
 			})
 		}
@@ -876,24 +876,35 @@ app.post('/api/updateStud', async (req, res) => {
 			)
 			return res.json({ status: 'ok', msg: 'details updated successfully' })
 		}
+		const supervisor = await Prof.findOne({ email: user.supervisor });
+		if(!supervisor)
+		{
+			return res.json({ status: 'failed', idx: '6', error : 'Invalid Supervisor selected' })
+		}
 		if(!Supervisor || typeof Supervisor !== 'string')
 		{
 			Supervisor=user.supervisor
 		}
-		else if(user.supervisor)
+		else
 		{
-			nodemailer.supChange(name, email)	
-			const sup=await Prof.updateOne(
-				{ email: user.supervisor },
-				{
-					$pull: {
-						studE: user.email,
-						studN: user.name,
-						studR: user.rollNo
-					}
-				}
-			)
+			const newSup = await Prof.findOne({ email: Supervisor });
+			if(!newSup)
+			{
+				return res.json({ status: 'failed', idx: '6', error : 'Invalid Supervisor selected' })
+			}
+			nodemailer.supChange(name, supervisor.email);
+			nodemailer.supervisorReq(name, Supervisor, newSup.Name)
 		}
+		const sup=await Prof.updateOne(
+			{ email: user.supervisor },
+			{
+				$pull: {
+					studE: user.email,
+					studN: user.name,
+					studR: user.rollNo
+				}
+			}
+		)
 		if(!title || typeof title !== 'string')
 		{
 			title=user.title
@@ -912,95 +923,65 @@ app.post('/api/updateStud', async (req, res) => {
 					}
 				}
 			)	
+			const user1 = await Prof.updateOne(
+				{ email: Supervisor }, 
+				{
+					$push: {
+						studE: email,
+						studN: name,
+						studR: rollNo
+					}
+				}
+			)
+			if(user1.acknowledged === false || _user.acknowledged === false)
+			{
+				return res.json({ status: 'failed', error : 'An unknown error occured' })
+			}
 			return res.json({ status: 'ok', msg: 'details updated successfully' })
 		}
 		if((internal && typeof internal === 'string') || (external && typeof external === 'string'))
 		{
+			if(!internal || typeof internal !== 'string')
+			{
+				internal=user.internal
+			}
+			if(!external || typeof external !== 'string') 
+			{
+				external=user.external
+			}
 			const user2=await Prof.findOne({ email: Supervisor })
-			const user3=await Prof.findOne({ email: internal });
+			const user3=await Prof.findOne({ email: internal })
 			const user4=await Prof.findOne({ email: external })
+			if(!user3 || !user4)
+			{
+				return res.json({ status: 'failed', idx: '8', error: 'Invalid Examiner Selected' })
+			}
 			nodemailer.ExaminerNew(name, internal, external, user2.Name, user3.Name, user4.Name)
 		}
-		if(!internal || typeof internal !== 'string')
-		{
-			internal=user.internal
-		}
-		else if(user.internal)
-		{
-			const inter = await Prof.updateOne(
-				{ email: user.internal },
-				{
-					$pull: {
-						Timing: user.dateTime,
-						Venue: user.venue
-					}
+		const inter = await Prof.updateOne(
+			{ email: user.internal },
+			{
+				$pull: {
+					Timing: user.dateTime,
+					Venue: user.venue
 				}
-			)
-		}
-		if(!external || typeof external !== 'string') 
-		{
-			external=user.external
-		}
-		else if(user.internal)
-		{
-			const exter = await Prof.updateOne(
-				{ email: user.external },
-				{
-					$pull: {
-						Timing: user.dateTime,
-						Venue: user.venue
-					}
+			}
+		)
+		const exter = await Prof.updateOne(
+			{ email: user.external },
+			{
+				$pull: {
+					Timing: user.dateTime,
+					Venue: user.venue
 				}
-			)
-		}
+			}
+		)
 		if(!timing) {
 			timing=user.dateTime
-		}
-		else if(user.internal)
-		{
-			const inter = await Prof.updateOne(
-				{ email: user.internal },
-				{
-					$pull: {
-						Timing: user.dateTime,
-						Venue: user.venue
-					}
-				}
-			)
-			const exter = await Prof.updateOne(
-				{ email: user.external },
-				{
-					$pull: {
-						Timing: user.dateTime,
-						Venue: user.venue
-					}
-				}
-			)
 		}
 		if(!venue || typeof venue !== 'string')
 		{
 			venue=user.venue
-		}
-		else if(user.internal)
-		{
-			const inter = await Prof.updateOne(
-				{ email: user.internal },
-				{
-					$pull: {
-						Timing: user.dateTime,
-						Venue: user.venue
-					}
-				}
-			)
-			const exter = await Prof.updateOne(
-				{ email: user.external },
-				{
-					$pull: {
-						Timing: user.dateTime,
-						Venue: user.venue
-					}
-				}
-			)
 		}
 		const exactDate = timing.substring(0, 10);
 		const exactTime = timing.substring(11);
