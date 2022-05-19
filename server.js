@@ -141,7 +141,7 @@ app.post('/api/register', async (req, res) => {
 		else {
 			return res.json({ status: 'failed', idx: '6', error: 'Invalid request' })
 		}
-		nodemailer.registered(Name, email, role, password)
+		nodemailer.registered(Name, email, role, plainTextPassword)
 		return res.json({status: 'ok', message: 'Registered successfully'})
     } catch (error) {
         if (error.code === 11000) {
@@ -255,6 +255,11 @@ app.post('/api/forget', async (req, res) => {
 	try {
 		if(type === '1')
 		{
+			const user1=await Student.findOne({ email })
+			if(!user1)
+			{
+				return res.json({ status: 'failed', idx:'4', error: 'Invalid User' })
+			}
 			const result = await Student.updateOne(
 				{ email },
 				{
@@ -275,6 +280,11 @@ app.post('/api/forget', async (req, res) => {
 		}
 		else if(type === '2')
 		{
+			const user1=await Prof.findOne({ email })
+			if(!user1)
+			{
+				return res.json({ status: 'failed', idx:'4', error: 'Invalid User' })
+			}
 			const result = await Prof.updateOne(
 				{ email },
 				{
@@ -295,6 +305,11 @@ app.post('/api/forget', async (req, res) => {
 		}
 		if(type === '3')
 		{
+			const user1=await Admin.findOne({ email })
+			if(!user1)
+			{
+				return res.json({ status: 'failed', idx:'4', error: 'Invalid User' })
+			}
 			const result = await Admin.updateOne(
 				{ email },
 				{
@@ -303,6 +318,7 @@ app.post('/api/forget', async (req, res) => {
 					}
 				}
 			)
+			console.log(result)
 			if(result.acknowledged === true)
 			{
 				nodemailer.forgetPass(email, 'Adm', code)
@@ -476,7 +492,7 @@ app.post('/api/reval', async (req, res) => {
 			res.json({ status: 'failed', error : 'Invalid Request' })
 		}
 	} catch {
-		res.json({ status: 'error', error: 'Session time out' })
+		res.json({ status: 'error', error: 'Invalid attempt to access the page' })
 	}
 })
 
@@ -1022,63 +1038,79 @@ app.post('/api/updateOther', async (req, res) => {
 	{
 		return res.json({ status: 'error', idx: '4', error: 'Invalid email' });
 	}
-	if(type === '1')
-	{
-		if(Name && typeof Name === 'string')
+	try {
+		if(type === '1')
 		{
-			await Prof.updateOne(
-				{ email },
-				{
-					$set: { Name }
-				}
-			)
+			const user = await Prof.findOne({ email }).lean();
+			if(!user)
+			{
+				return res.json({ status: 'failed', idx: '4', error: 'Invalid User' })
+			}
+			if(Name && typeof Name === 'string')
+			{
+				await Prof.updateOne(
+					{ email },
+					{
+						$set: { Name }
+					}
+				)
+			}
+			if(prog && typeof prog === 'string')
+			{
+				await Prof.updateOne(
+					{ email },
+					{
+						$set: { prog }
+					}
+				)
+			}
+			if(department && typeof department === 'string')
+			{
+				await Prof.updateOne(
+					{ email },
+					{
+						$set: { department }
+					}
+				)
+			}
+			if(!Name || typeof Name !== 'string')
+			{
+				const user1=await Prof.findOne({ email });
+				Name = user1.Name
+			}
+			nodemailer.updated(Name, email)
+			res.json({ status: 'ok', msg: 'Details Updated Successfully' })
 		}
-		if(prog && typeof prog === 'string')
+		else if(type === '2')
 		{
-			await Prof.updateOne(
-				{ email },
-				{
-					$set: { prog }
-				}
-			)
+			const user = await Admin.findOne({ email });
+			if(!user)
+			{
+				return res.json({ status: 'failed', error: 'An unknown error occured' })
+			}
+			if(Name && typeof Name === 'string')
+			{
+				await Admin.updateOne(
+					{ email },
+					{
+						$set: { Name }
+					}
+				)
+			}
+			if(Plainpassword && typeof Plainpassword === 'string')
+			{
+				const password = await bcrypt.hash(Plainpassword, 10);
+				await Admin.updateOne(
+					{ email },
+					{
+						$set: { password }
+					}
+				)
+			}
+			res.json({ status: 'ok', msg: 'Details Updated Successfully' })
 		}
-		if(department && typeof department === 'string')
-		{
-			await Prof.updateOne(
-				{ email },
-				{
-					$set: { department }
-				}
-			)
-		}
-		if(!Name || typeof Name !== 'string')
-		{
-			const user1=await Prof.findOne({ email });
-			Name = user1.Name
-		}
-		nodemailer.updated(Name, email)
-	}
-	else if(type === '2')
-	{
-		if(Name && typeof Name === 'string')
-		{
-			await Admin.updateOne(
-				{ email },
-				{
-					$set: { Name }
-				}
-			)
-		}
-		if(Plainpassword && typeof Plainpassword === 'string')
-		{
-			const password = await bcrypt.hash(Plainpassword, 10);
-			await Admin.updateOne(
-				{ email },
-				{
-					$set: { password }
-				}
-			)
-		}
+	} catch {
+		res.json({ status: 'failed', error : 'An Unknown error occured' })
 	}
 })
 
@@ -1089,10 +1121,7 @@ app.get('/expstud', async (req, res) => {
 		const fields = ['name', 'email', 'rollNo', 'department', 'supervisor', 'title', 'internal', 'external', 'Date', 'Time(in GMT)', 'venue'];
 		const opts = { fields };
 		var data = [];
-		if(!post)
-		{
-			return res.json({ status : 'failed' });
-		}
+		console.log(post.length)
 		for(var i=0; i<post.length; i++)
 		{
 			if(!post[i].supervisor)
@@ -1319,7 +1348,7 @@ app.post('/api/delUser', async (req, res) => {
 			const user = await Admin.find({});
 			if(user.length === 1)
 			{
-				return res.json({ status : 'failed', idx: '1', error: 'Atleast one admin should be there' })
+				return res.json({ status : 'failed', idx: '1', error: 'Your account cannot be deleted as atleast one admin should be there' })
 			}
 			const user1=await Admin.findOne({ email });
 			name = user1.Name
@@ -1328,7 +1357,7 @@ app.post('/api/delUser', async (req, res) => {
 		nodemailer.deleted(name, email)
 		res.json({ status: 'ok', msg: 'User deleted Successfully' })
 	} catch (error) {
-		res.json({ status: 'failed', error: 'An unknown error has occured' })
+		res.json({ status: 'failed', idx: '4', error: 'Invalid Email' })
 	}
 })
 

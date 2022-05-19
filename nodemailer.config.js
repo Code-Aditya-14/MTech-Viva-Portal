@@ -31,7 +31,6 @@ module.exports.registered = (name, email, role, password) => {
         <h3>Login Credentials</h3>
         <h4>Username: ${email}</h4>
         <h4>Password: ${password}</h4>
-        <p>We recommend you to change your password while logging in using forget password</p>
         <br>
         <h5>Regards</h5>`
         

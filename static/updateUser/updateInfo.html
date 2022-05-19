@@ -18,7 +18,7 @@
       <div class="form">
         <div class="login">
           <div class="login-header">
-            <h2>Update Faculty</h2>
+            <h2>Update Your Info</h2>
           </div>
         </div>
         <form class="login-form" id="stud-form">
@@ -68,6 +68,7 @@
     async function UpdateUser(event) {
         event.preventDefault()
         const email = localStorage.getItem('emailAdmin')
+        console.log(email)
         const Name =document.getElementById('name').value
         const password = document.getElementById('pass').value
         
