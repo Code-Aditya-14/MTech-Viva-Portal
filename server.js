@@ -549,7 +549,7 @@ app.post('/api/details', async (req, res) => {
 			console.log('professor not found');
 			return res.json({ status: 'failed', idx: '6', error: 'Please Select valid Supervisor' })
 		}
-		// nodemailer.supervisorReq(name, Supervisor, user1.Name);
+		nodemailer.supervisorReq(name, Supervisor, user1.Name);
 		console.log(user1, Supervisor);
 		res.json({ status : 'ok' })
 	} catch (err) {
