@@ -189,7 +189,7 @@ module.exports.forgetPass = (email, user, code) => {
         to:email,
         subject: 'Password recovery email',
         html: `<h2>Hello There</h2>
-        <p>Please click on the link and enter the new password. <a href="http://localhost:3000/verify/${user}/${code}">Click here</a>.</p>
+        <p>Please click on the link and enter the new password. <a href="https://mtech-viva-portal.herokuapp.com/verify/${user}/${code}">Click here</a>.</p>
         <br>
         <h5>Regards</h5>`
     })
