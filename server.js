@@ -524,6 +524,16 @@ app.post('/api/details', async (req, res) => {
 	const name=user.name;
 	const rollNo=user.rollNo;
 	try {
+		const user1 = await Prof.findOne({ email: Supervisor }).lean();
+		if(!user1) 
+		{
+			console.log('professor not found');
+			return res.json({ status: 'failed', idx: '6', error: 'Please Select valid Supervisor' })
+		}
+		if(user.supervisor)
+		{
+			nodemailer.supChange(name, user.supervisor)
+		}
 		await Student.updateOne({ 
 			email 
 		},
@@ -543,12 +553,6 @@ app.post('/api/details', async (req, res) => {
 				} 
 			}
 		);
-		const user1 = await Prof.findOne({ email: Supervisor }).lean();
-		if(!user1) 
-		{
-			console.log('professor not found');
-			return res.json({ status: 'failed', idx: '6', error: 'Please Select valid Supervisor' })
-		}
 		nodemailer.supervisorReq(name, Supervisor, user1.Name);
 		console.log(user1, Supervisor);
 		res.json({ status : 'ok' })
