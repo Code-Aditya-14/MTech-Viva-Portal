@@ -838,13 +838,14 @@ app.post('/api/updateStud', async (req, res) => {
 			const date1 = new Date(timing);
 			const date2 = new Date();
 			const exactT = timing.substring(11, 14);
-			if(!timing || date1-date2<=0)
+			console.log(date1-date2)
+			if(date1-date2<=0)
 			{
-				return res.json({ status: 'failed', idx: '3', error: 'Invalid time for examination' });
+				return res.json({ status: 'failed', idx: '10', error: 'Invalid time for examination' });
 			}
 			if(parseInt(exactT)<9 || parseInt(exactT)>17)
 			{
-				return res.json({ status: 'failed', idx: '3', error: 'Timing should be between 9AM and 5PM' })
+				return res.json({ status: 'failed', idx: '10', error: 'Timing should be between 9AM and 5PM' })
 			}
 		}
 		if(!name || typeof name !== 'string')
@@ -1003,6 +1004,35 @@ app.post('/api/updateStud', async (req, res) => {
 		const user5=await Prof.findOne({ email: Supervisor })
 		const user6=await Prof.findOne({ email: internal })
 		const user7=await Prof.findOne({ email: external })
+		const user1 = await Prof.updateOne(
+			{ email: Supervisor }, 
+			{
+				$push: {
+					studE: email,
+					studN: name,
+					studR: rollNo
+				}
+			}
+		)
+		const user2 = await Prof.updateOne(
+			{ email: internal },
+			{
+				$push: {
+					Timing: timing,
+					Venue: venue
+				}
+			}
+		)
+		const user3 = await Prof.updateOne(
+			{ email: external },
+			{
+				$push: {
+					Timing: timing,
+					Venue: venue
+				}
+			}
+		)
+
 		nodemailer.studEvalTiming(name, email, user5.Name, exactDate, exactTime, venue);
 		nodemailer.newExamSchedule(name, Supervisor, internal, external, user5.Name, user6.Name, user7.Name, exactDate, exactTime, venue)
 		res.json({ status: 'ok', msg: 'details updated successfully' })
