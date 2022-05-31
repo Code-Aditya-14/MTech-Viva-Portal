@@ -1,5 +1,7 @@
 # MTech-Viva-Portal
 
+#### Live Link: https://mtech-viva-portal.herokuapp.com/
+
 ## Steps to use in local system:
 * Use npm install or npm i to install all dependencies
 * Emails are send using OAuth2 of google so you need to generate clientID, client secret and refresh token and add a test email for sending the emails for using this app.
