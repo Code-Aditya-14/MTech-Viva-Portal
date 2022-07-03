@@ -97,13 +97,6 @@ app.post('/api/register', async (req, res) => {
 		return res.json({ status: 'error', idx: '6', error: 'Invalid Request' })
 	}
 
-	if (plainTextPassword.length < 6) {
-		return res.json({
-			status: 'error',
-			idx: '5',
-			error: 'Password too small. Should be atleast 6 characters'
-		})
-	}
 	var role;
 	const password = await bcrypt.hash(plainTextPassword, 10)
     try {
@@ -166,7 +159,9 @@ app.post('/api/login', async (req, res) => {
 	{
 		return res.json({ status: 'error', idx: '1', error: 'Invalid email/password' });
 	}
-	if(type === '1')
+	console.log(type);
+	console.log(typeof type)
+	if(type == '1')
 	{
 		const user = await Student.findOne({ email }).lean()
 		if (!user) {
@@ -191,7 +186,7 @@ app.post('/api/login', async (req, res) => {
 			return res.json({ status: 'ok', data: token })
 		}
 	}
-	if(type === '2')
+	if(type == '2')
 	{
 		const user = await Prof.findOne({ email }).lean()
 		if (!user) {
@@ -215,6 +210,7 @@ app.post('/api/login', async (req, res) => {
 			console.log(token)
 			return res.json({ status: 'ok', data: token })
 		}
+		console.log(await bcrypt.compare(password, user.password))
 	}
 	if(type === '3')
 	{
@@ -240,9 +236,6 @@ app.post('/api/login', async (req, res) => {
 			console.log(token)
 			return res.json({ status: 'ok', data: token })
 		}
-	}
-	else {
-		return res.json({ status: 'failed', error: 'Invalid Request'})
 	}
 	res.json({ status: 'error', idx: '1', error: 'Invalid email/password' });
 })

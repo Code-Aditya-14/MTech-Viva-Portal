@@ -59,10 +59,14 @@
             localStorage.setItem('token', result.data)
             document.getElementById('1').innerHTML = "";
             window.location='/profs'
-        } else {
+        } else if(result.idx) {
             document.getElementById('email-login').innerHTML = "";
             document.getElementById('password').innerHTML = "";
             document.getElementById(result.idx).innerHTML = result.error;
+        } else {
+            document.getElementById('email-login').value = "";
+            document.getElementById('password').value = "";
+            alert(result.error);
         }
     }
 </script>
